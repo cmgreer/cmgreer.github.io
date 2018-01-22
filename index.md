@@ -1,11 +1,11 @@
-#Removal of Nullable Prefixes and Suffixes in ICGrep
+# Removal of Nullable Prefixes and Suffixes in ICGrep
 
-##Introduction
+## Introduction
 
 I chose to take a look at the **RemoveNullablePrefix/Suffix** passes made by ICGrep.
 Both functions perform very similar tasks so I will focus on **RemoveNullablePrefix** for simplicity although the statements can easily be applied to **RemoveNullableSuffix**.
 
-##What it does
+## What it does
 
 **RemoveNullablePrefix** looks for leading repetitions and will reduce them to the
 smallest repetition needed to perform the same function.
