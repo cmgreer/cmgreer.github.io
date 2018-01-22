@@ -23,3 +23,32 @@ replaced by ````a{min, min}````
 For example matching ````a{2,4}bc```` is equivalent to matching ````a{2,2}bc````
 
   ``aaaabc`` -> aa``aabc``
+
+## Benefits
+
+By shortening or completely removing leading and trailing repetitions in a
+regular expression, the matching algorithm will have less work to do and will
+run faster.
+
+## Shortcomings
+
+Some information from the original regular expression is lost.
+
+Some grep programs will highlight the matching portion of a string in the
+output, since ICGrep uses a modified regular expression, it is
+non-trivial to highlight output as the user would expect.
+
+## Further Optimizations
+
+When given nested leading and/or trailing repetitions, **RemoveNullablePrefix/Suffix**
+does not always fully reduce a regular expression.
+
+For example the RE: ````(a{2,5}b*)+c```` will produce the following results:
+
+````
+Parser:
+(Seq[Rep(Name "\1" =((Seq[Rep(CC "CC_61" [97]/Unicode,2,5),CC "CC_62" [98]/Unicode])),1,Unbounded),CC "CC_63" [99]/Unicode])
+...
+RemoveNullablePrefix:
+(Seq[Name "\1" =((Seq[Rep(CC "CC_61" [97]/Unicode,2,5),CC "CC_62" [98]/Unicode])),CC "CC_63" [99]/Unicode])
+````
