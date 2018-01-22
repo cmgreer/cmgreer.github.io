@@ -14,6 +14,6 @@ A RE such as ````a*bc```` can be replaced with ````bc````. The latter will match
 the same texts but instead of starting at the first a, it will start to match
 at the b.
 
-````
+``
 **aaaabc** -> aaaa**bc**
-````
+``
