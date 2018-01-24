@@ -72,3 +72,49 @@ RemoveNullablePrefix (First Pass):
 RemoveNullablePrefix (Second Pass):
 (Seq[Name "\1" =((Seq[Rep(CC "CC_61" [97]/Unicode,2,2),CC "CC_62" [98]/Unicode])),CC "CC_63" [99]/Unicode])
 ````
+
+Implementation:
+
+````
+RE * RE_Nullable::removeNullablePrefix(RE * re) {
+    if (Seq * seq = dyn_cast<Seq>(re)) {
+        std::vector<RE*> list;
+        for (auto i = seq->begin(); i != seq->end(); ++i) {
+            if (!isNullable(*i)) {
+                list.push_back(removeNullablePrefix(*i));
+                std::copy(++i, seq->end(), std::back_inserter(list));
+                break;
+            }
+        }
+        re = makeSeq(list.begin(), list.end());
+    } else if (Alt * alt = dyn_cast<Alt>(re)) {
+        std::vector<RE*> list;
+        for (auto i = alt->begin(); i != alt->end(); ++i) {
+            list.push_back(removeNullablePrefix(*i));
+        }
+        re = makeAlt(list.begin(), list.end());
+    } else if (Rep * rep = dyn_cast<Rep>(re)) {
+        if ((rep->getLB() == 0) || (isNullable(rep->getRE()))) {
+            re = makeSeq();
+        }
+
+        /*
+        else if (rep->getLB() == 1){
+            re = removeNullablePrefix(rep->getRE());
+        }
+        */
+
+        else if (hasNullablePrefix(rep->getRE())) {
+            re = makeSeq({removeNullablePrefix(rep->getRE()), makeRep(rep->getRE(), rep->getLB() - 1, rep->getLB() - 1)});
+        }
+        else {
+            re = makeRep(rep->getRE(), rep->getLB(), rep->getLB());
+        }
+    } else if (Name * name = dyn_cast<Name>(re)) {
+        if (name->getDefinition()) {
+            name->setDefinition(removeNullablePrefix(name->getDefinition()));
+        }
+    }
+    return re;
+}
+````
